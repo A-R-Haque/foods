@@ -3,23 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weekly Calendar</title>
-<style>
-  .checked { background-color: yellow; }
-  .container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-  }
-  table {
-    grid-column: 1 / -1;
-  }
-  .clear-btn {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-  }
-</style>
+<title>Food Calendar</title>
+  <link rel="icon" href="jonah.ico" type="image/x-icon"> 
+  <style>
+    body {
+      background-color: white;
+      color: black;
+      font-family: Arial, sans-serif;
+    }
+    .checked { background-color: yellow; }
+    button {
+      background-color: seagreen;
+      color: yellow;
+      cursor: pointer;
+      border: 2px solid black;
+      padding: 10px;
+      margin: 2px;
+      width: 100%; /* Ensures buttons expand to fill the cell */
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th {
+      border: 6px solid black;
+      text-align: center;
+      padding: 8px;
+      background-color: darkgreen; /* Sets the background color of the headers to red */
+      color: white; /* Ensures the text color is white */
+      font-family: 'Times New Roman', Times, serif; /* Changes the font to Times New Roman */
+    }
+    td {
+      border: 2px solid black;
+      text-align: center; /* Center align text and buttons */
+      padding: 8px;
+      font-family: Arial, sans-serif; /* Keeps the body font as Arial for contrast */
+    }
+    .clear-row button {
+      margin: 0; /* Remove margin from buttons in the clear row for alignment */
+      padding: 5px; /* Adjust padding to your preference */
+    }
+    img.header-image {
+      display: block;
+      margin: auto; /* Centers the image */
+      max-width: 100%; /* Ensures image does not exceed the page width */
+    }
+  </style>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
@@ -80,11 +110,12 @@
   </script>
 </head>
 <body>
+  <img src="/path/to/jonah1.gif" alt="Jonah" class="header-image"> <!-- Update the path to where your jonah1.gif is stored -->
 <div class="container">
-  <table border="1">
+  <table border="6">
     <thead>
       <tr>
-        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+        <th>MONDAY</th><th>TUESDAY</th><th>WEDNESDAY</th><th>THURSDAY</th><th>FRIDAY</th><th>SATURDAY</th><th>SUNDAY</th>
       </tr>
     </thead>
     <tbody>
@@ -154,14 +185,18 @@
       </tr>
 
       </tbody>
+    <tfoot>
+      <tr class="clear-row">
+        <td><button class="clear-btn" data-day="mon">Clear</button></td>
+        <td><button class="clear-btn" data-day="tue">Clear</button></td>
+        <td><button class="clear-btn" data-day="wed">Clear</button></td>
+        <td><button class="clear-btn" data-day="thu">Clear</button></td>
+        <td><button class="clear-btn" data-day="fri">Clear</button></td>
+        <td><button class="clear-btn" data-day="sat">Clear</button></td>
+        <td><button class="clear-btn" data-day="sun">Clear</button></td>
+      </tr>
+    </tfoot>
   </table>
-  <button class="clear-btn" data-day="mon">Clear Mon</button>
-  <button class="clear-btn" data-day="tue">Clear Tue</button>
-  <button class="clear-btn" data-day="wed">Clear Wed</button>
-  <button class="clear-btn" data-day="thu">Clear Thu</button>
-  <button class="clear-btn" data-day="fri">Clear Fri</button>
-  <button class="clear-btn" data-day="sat">Clear Sat</button>
-  <button class="clear-btn" data-day="sun">Clear Sun</button>
-</div>
+  
 </body>
 </html>
