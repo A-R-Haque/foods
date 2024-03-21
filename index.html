@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Calendar</title>
+<style>
+  .checked { background-color: yellow; }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  table {
+    grid-column: 1 / -1;
+  }
+  .clear-btn {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+  }
+</style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJ5cV47sXLk97Zd0jWIohXrXlj8KGCmwA",
+      authDomain: "allergenic-foods.firebaseapp.com",
+      projectId: "allergenic-foods",
+      storageBucket: "allergenic-foods.appspot.com",
+      messagingSenderId: "397559128851",
+      appId: "1:397559128851:web:c3947a845b49d2969ab0e6",
+      measurementId: "G-F1NLQ42617"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', async (e) => {
+          const day = e.target.dataset.day;
+          const food = e.target.id;
+          const checked = e.target.checked;
+          const docRef = doc(db, 'days', `${day}-${food}`);
+          await setDoc(docRef, { checked });
+          e.target.parentElement.classList.toggle('checked', checked);
+        });
+      });
+
+      // Load and set the state of checkboxes from Firestore
+      const querySnapshot = await getDocs(collection(db, 'days'));
+      querySnapshot.forEach((doc) => {
+        const [day, food] = doc.id.split('-');
+        const data = doc.data();
+        const checkbox = document.querySelector(`#${food}[data-day="${day}"]`);
+        if (checkbox) {
+          checkbox.checked = data.checked;
+          checkbox.parentElement.classList.toggle('checked', data.checked);
+        }
+      });
+
+      // Clear buttons functionality
+      document.querySelectorAll('.clear-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const day = btn.dataset.day;
+          const checkboxesForDay = document.querySelectorAll(`input[data-day="${day}"]`);
+          checkboxesForDay.forEach(async (checkbox) => {
+            const food = checkbox.id;
+            const docRef = doc(db, 'days', `${day}-${food}`);
+            await setDoc(docRef, { checked: false });
+            checkbox.checked = false;
+            checkbox.parentElement.classList.remove('checked');
+          });
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+<div class="container">
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="day" data-day="mon">rice<input type="checkbox" id="riceMon" data-day="mon"></td>
+        <td class="day" data-day="tue">wheat<input type="checkbox" id="wheatTue" data-day="tue"></td>
+        <td class="day" data-day="wed">rice<input type="checkbox" id="riceWed" data-day="wed"></td>
+        <td class="day" data-day="thu">wheat<input type="checkbox" id="wheatThu" data-day="thu"></td>
+        <td class="day" data-day="fri">rice<input type="checkbox" id="riceFri" data-day="fri"></td>
+        <td class="day" data-day="sat">wheat<input type="checkbox" id="wheatSat" data-day="sat"></td>
+        <td class="day" data-day="sun">rice<input type="checkbox" id="riceSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">banana<input type="checkbox" id="bananaMon" data-day="mon"></td>
+        <td class="day" data-day="tue">banana<input type="checkbox" id="bananaTue" data-day="tue"></td>
+        <td class="day" data-day="wed">banana<input type="checkbox" id="bananaWed" data-day="wed"></td>
+        <td class="day" data-day="thu">banana<input type="checkbox" id="bananaThu" data-day="thu"></td>
+        <td class="day" data-day="fri">banana<input type="checkbox" id="bananaFri" data-day="fri"></td>
+        <td class="day" data-day="sat">banana<input type="checkbox" id="bananaSat" data-day="sat"></td>
+        <td class="day" data-day="sun">banana<input type="checkbox" id="bananaSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">new food<input type="checkbox" id="newFoodMon" data-day="mon"></td>
+        <td class="day" data-day="tue">new food<input type="checkbox" id="newFoodTue" data-day="tue"></td>
+        <td class="day" data-day="wed">new food<input type="checkbox" id="newFoodWed" data-day="wed"></td>
+        <td class="day" data-day="thu">new food<input type="checkbox" id="newFoodThu" data-day="thu"></td>
+        <td class="day" data-day="fri">new food<input type="checkbox" id="newFoodFri" data-day="fri"></td>
+        <td class="day" data-day="sat">new food<input type="checkbox" id="newFoodSat" data-day="sat"></td>
+        <td class="day" data-day="sun">new food<input type="checkbox" id="newFoodSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">egg<input type="checkbox" id="eggMon" data-day="mon"></td>
+        <td class="day" data-day="tue">egg<input type="checkbox" id="eggTue" data-day="tue"></td>
+        <td class="day" data-day="wed">shrimp<input type="checkbox" id="shrimpWed" data-day="wed"></td>
+        <td class="day" data-day="thu">shrimp<input type="checkbox" id="shrimpThu" data-day="thu"></td>
+        <td class="day" data-day="fri">fish<input type="checkbox" id="fishFri" data-day="fri"></td>
+        <td class="day" data-day="sat">fish<input type="checkbox" id="fishSat" data-day="sat"></td>
+        <td class="day" data-day="sun">egg<input type="checkbox" id="eggSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">peanut<input type="checkbox" id="peanutMon" data-day="mon"></td>
+        <td class="day" data-day="tue">cashew<input type="checkbox" id="cashewTue" data-day="tue"></td>
+        <td class="day" data-day="wed">walnut<input type="checkbox" id="walnutWed" data-day="wed"></td>
+        <td class="day" data-day="thu">peanut<input type="checkbox" id="peanutThu" data-day="thu"></td>
+        <td class="day" data-day="fri">cashew<input type="checkbox" id="cashewFri" data-day="fri"></td>
+        <td class="day" data-day="sat">peanut<input type="checkbox" id="peanutSat" data-day="sat"></td>
+        <td class="day" data-day="sun">walnut<input type="checkbox" id="walnutSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">almond<input type="checkbox" id="almondMon" data-day="mon"></td>
+        <td class="day" data-day="tue">sesame<input type="checkbox" id="sesameTue" data-day="tue"></td>
+        <td class="day" data-day="wed">hazelnut<input type="checkbox" id="hazelnutWed" data-day="wed"></td>
+        <td class="day" data-day="thu">almond<input type="checkbox" id="almondThu" data-day="thu"></td>
+        <td class="day" data-day="fri">sesame<input type="checkbox" id="sesameFri" data-day="fri"></td>
+        <td class="day" data-day="sat">sesame<input type="checkbox" id="sesameSat" data-day="sat"></td>
+        <td class="day" data-day="sun">hazelnut<input type="checkbox" id="hazelnutSun" data-day="sun"></td>
+      </tr>
+      <tr>
+        <td class="day" data-day="mon">soy<input type="checkbox" id="soyMon" data-day="mon"></td>
+        <td class="day" data-day="tue">soy<input type="checkbox" id="soyTue" data-day="tue"></td>
+        <td class="day" data-day="wed">soy<input type="checkbox" id="soyWed" data-day="wed"></td>
+        <td class="day" data-day="thu">dairy<input type="checkbox" id="dairyThu" data-day="thu"></td>
+        <td class="day" data-day="fri">dairy<input type="checkbox" id="dairyFri" data-day="fri"></td>
+        <td class="day" data-day="sat">dairy<input type="checkbox" id="dairySat" data-day="sat"></td>
+        <td class="day" data-day="sun">soy<input type="checkbox" id="soySun" data-day="sun"></td>
+      </tr>
+
+      </tbody>
+  </table>
+  <button class="clear-btn" data-day="mon">Clear Mon</button>
+  <button class="clear-btn" data-day="tue">Clear Tue</button>
+  <button class="clear-btn" data-day="wed">Clear Wed</button>
+  <button class="clear-btn" data-day="thu">Clear Thu</button>
+  <button class="clear-btn" data-day="fri">Clear Fri</button>
+  <button class="clear-btn" data-day="sat">Clear Sat</button>
+  <button class="clear-btn" data-day="sun">Clear Sun</button>
+</div>
+</body>
+</html>
